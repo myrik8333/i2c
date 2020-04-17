@@ -21,7 +21,24 @@ module driver(
 	localparam wack_2=6;
 	localparam 	stop=7;
 
+	always @(posedge clk) begin
+		if (reset==1) begin
+				sclk<=1;
+		end
+		else begin
+			if((state==idle)||(state==start)||(state==stop)) begin
+			 	sclk<=1;
 			
+			end
+			else begin 
+				sclk<=~sclk;
+			end
+		
+		end
+	
+	
+	end
+	
 	//доабавить состояни идле
 	always @(posedge clk) begin
 		//sda<=1;
