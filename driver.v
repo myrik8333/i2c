@@ -3,7 +3,7 @@ module driver(
 	tri1 sda,
 	);
 	parameter adress =7'h27;  
-	parameter delay=50;
+	//parameter delay=50;
 	
 	
 	   task rst; 
@@ -20,7 +20,9 @@ module driver(
 	   	input [2:0] start_or_stop, read_or_write;
 		input [7:0] data;
 		input [6:0] adress;
-		 #20 $display("start_or_stop , %d, read_or_write, %d, adress, %d,data, %d",start_or_stop, read_or_write, data, 27);
+		input [5:0] delay;
+		input [2:0] ackn_behavior_flag;
+		 #20 $display("start_or_stop , %d, read_or_write, %d, adress, %d,data, %d",start_or_stop, read_or_write, data, adress);
 	   	begin
 			integer adr_count=7;
 			integer data_count=8;
@@ -48,20 +50,33 @@ module driver(
 					#delay sclk=1;
 					#delay sclk=0;
 					//ackn
-					#delay release sda;
-					#delay sclk=1;
-					#delay sclk=0;
-					for(j=0;j<8;j=j+1) begin
-						#delay force sda=data[data_count];
-						data_count=data_count-1;
-						#delay sclk=1;
-						#delay sclk=0;
-						
+					acknowledge(delay);
+					//так как запись при 0
+					if (read_or_write==0) begin
+						for(j=0;j<8;j=j+1) begin
+							#delay force sda=data[data_count];
+							data_count=data_count-1;	  
+							#delay sclk=1;				   
+							#delay sclk=0;
+							
+						end
+						acknowledge(delay);
+					end	 
+					else if(read_or_write==1) begin
+					 	data_count=7;
+						for(j=0;j<8;j=j+1) begin
+							#delay sclk=1;
+							data[data_count]=sda;
+							data_count=data_count-1;
+							#delay sclk=0;
+							
+						end
+						//no_ackn
+						if (ackn_behavior_flag)
+							no_acknowledge(delay);
+						else 
+							acknowledge(delay);
 					end
-					//ackn_again
-					#delay release sda;
-					#delay sclk=1;
-					#delay sclk=0;
 					//stop
 					#delay force sda = 0;
 					#delay  sclk = 1;
@@ -72,7 +87,22 @@ module driver(
 			 
 		end
 	   	endtask
-	   
+	task acknowledge;
+	input [2:0] delay;
+		begin
+			#delay release sda;
+			#delay sclk=1;
+			#delay sclk=0;
+		end
+	endtask	
+	
+	task no_acknowledge;
+	input [2:0] delay;
+		begin
+			#delay sclk=1;
+			#delay sclk=0;
+		end
+	endtask
 	   
 endmodule
 	

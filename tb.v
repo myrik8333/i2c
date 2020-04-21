@@ -28,8 +28,8 @@ module test;
 		driver.rst;
 		repeat(100000) begin
 			sequencer.generate_params;
-			//#20 $display("start_or_stop , %d, read_or_write, %d, adress, %d,data, %d", sequencer.start_or_stop, sequencer.read_or_write, sequencer.data, 27);
-			driver.send(sequencer.start_or_stop,sequencer.read_or_write,sequencer.data,27);
+			#20 $display("start_or_stop , %d, read_or_write, %d, adress, %d,data, %d adress, %d half_period", sequencer.start_or_stop, sequencer.read_or_write, sequencer.data, sequencer.adress,sequencer.half_period,sequencer.ackn_behavior_flag);
+			driver.send(sequencer.start_or_stop,sequencer.read_or_write,sequencer.data,sequencer.adress,sequencer.half_period,sequencer.ackn_behavior_flag);
 			
 			end
 		end	 
