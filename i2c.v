@@ -1,13 +1,15 @@
 
 
 
-module i2c(sda,scl,out);
-	
+module i2c(clk,sda,scl,out,rst,adress,data);
+	input clk;
 	inout sda;
 	input scl;
 	output [7:0]out;
-	
-	parameter adress=7'h27;
+	input rst;
+	input [6:0] adress;
+	input [7:0] data;
+	//parameter adress=7'h27;
 	
 	
 	

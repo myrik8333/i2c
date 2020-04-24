@@ -1,20 +1,26 @@
 module driver( 
 	output reg sclk,
 	tri1 sda,
-	//output reg reset;
+	output reg rst,
+	output reg [7:0] i_data,
+	output reg  [6:0] i_adress	 
 	);
-	parameter adress =7'h27;  
+	//adress =7'h27;  
 	//parameter delay=50;
-	reg rst;
+	///reg rst;	
+	reg clk=0;
 	reg [7:0] data_from_slave;
+	
+	
 	task reset;
-	   begin
-		   sclk=1;
-		   release sda;
-		   rst=1'b1;
-	   	end
-	   endtask
-	   
+	begin  
+		i_data=8'h18;
+		i_adress=7'h27;
+		sclk=1;
+		release sda;
+		rst=1'b1;
+	end
+	endtask
 	   
 	   
 	   task send;
@@ -27,8 +33,9 @@ module driver(
 	   	begin
 			integer adr_count=7;
 			integer data_count=8;
-			integer i,j;
-			   	force sda=1;
+			integer i,j;  
+			//sync(delay);
+			  	force sda=1;
 				sclk<=1;
 			if(start_or_stop) begin
 				
@@ -158,9 +165,6 @@ module driver(
 			acknowledge(delay);	
 	end
 	endtask
-	
-	
-	
 	
 endmodule
 	
