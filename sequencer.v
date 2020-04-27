@@ -6,9 +6,11 @@ module sequencer();
 	reg [2:0] read_or_write;
 	reg [6:0] adress;
 	reg [7:0] data;
+	reg [7:0] data1;
 	reg [2:0] ackn_behavior_flag; 
 	reg [2:0] adress_flag;
 	reg [2:0] reset;
+	reg [15:0] i_data;
 	parameter real_adress=7'h27;
 	parameter bad_adress=7'h32;
 	parameter quit_param=100000, cond_param=30000,cond_param_2=128,delay=10000;
@@ -29,7 +31,9 @@ module sequencer();
 				adress=bad_adress;
 	
 			//adress=$urandom%128;
-			data=$urandom%256;																	
+			data=$urandom%256;
+			data1=$urandom%256;
+			i_data=$urandom%256;
 			end	 
 	endtask
 	
