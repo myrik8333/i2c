@@ -3,7 +3,7 @@
 
 module i2c(clk,sda,scl,out,rst,adress,data,o_sda,o_scl,o_sda_en,o_scl_en);
 	input clk;
-	inout sda;
+	input sda;
 	input scl;
 	output [15:0]out;
 	input rst;

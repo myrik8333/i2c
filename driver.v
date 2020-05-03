@@ -1,6 +1,6 @@
 module driver( 
 	output reg sclk,
-	tri1 sda,
+	output reg sda,
 	output reg rst,
 	output reg [7:0] i_data,
 	output reg  [6:0] i_adress,
@@ -18,8 +18,8 @@ module driver(
 		i_adress=7'h27;
 		sclk=1;	
 		flag<=0;
-		release sda;
-		rst=1'b1;
+		sda=1;
+		rst=1'b1; 	
 	end
 	endtask
 	   
@@ -37,8 +37,9 @@ module driver(
 			integer data_count=8;
 			integer i,j;  
 			//sync(delay);
+			#delay rst=1'b0;
 			i_data=$urandom%256;
-			  	force sda=1;
+			  	sda=1;
 				sclk<=1;
 			if(start_or_stop) begin
 				
@@ -71,20 +72,30 @@ module driver(
 	
 		   
 	task acknowledge;
-	input [2:0] delay;
+	input [5:0] delay;
 		begin
-			#delay release sda;
+			#delay;
 			#delay sclk=1;
 			#delay sclk=0;
 		end
 	endtask	
 	
 	task no_acknowledge;
-	input [2:0] delay;
+	input [5:0] delay;
 		begin
 			#delay sclk=1;
 			#delay sclk=0;
 		end
+	endtask
+	
+	task master_acknowledge; 
+	input [5:0] delay;
+	begin  
+		#delay sda=0;
+		#delay sclk=1;
+		#delay sclk=0;
+		
+	end
 	endtask
 	
 	task adress_send;
@@ -94,7 +105,7 @@ module driver(
 		integer adr_count=7;
 		integer i;
 		for (i=0;i<7;i=i+1) begin
-			#delay force sda=adress[adr_count];
+			#delay sda=adress[adr_count];
 			adr_count=adr_count-1;
 			#delay sclk=1;
 			#delay sclk=0;
@@ -107,7 +118,7 @@ module driver(
 	input [5:0] delay;
 	//input start_or_stop;
 		begin
-				#delay force sda = 0;
+				#delay sda = 0;
 				#delay sclk = 0;	 		
 		end
 	endtask
@@ -115,10 +126,9 @@ module driver(
 	task stop;
 	input [5:0] delay;
 		begin
-			#delay force sda = 0;
+			#delay sda = 0;
 			#delay  sclk = 1;
-			#delay release sda;
-			#delay;		
+			#delay;	
 		end
 	endtask
 	
@@ -126,7 +136,7 @@ module driver(
 	input [2:0] read_or_write;
 	input [5:0] delay;
 		begin
-			#delay force  sda=read_or_write;
+			#delay sda=read_or_write;
 			#delay sclk=1;
 			#delay sclk=0;
 		end
@@ -136,13 +146,13 @@ module driver(
 	task data_wr;
 	input [7:0] data;
 	input [7:0] data1;
-	input [2:0] delay;
+	input [5:0] delay;
 	integer data_count;
 	integer j;
 	begin
 		data_count=7;
 		for(j=0;j<8;j=j+1) begin
-			#delay force sda=data[data_count];
+			#delay sda=data[data_count];
 			data_count=data_count-1;	  
 			#delay sclk=1;				   
 			#delay sclk=0;				
@@ -150,7 +160,7 @@ module driver(
 		acknowledge(delay);
 		data_count=7;
 		for(j=0;j<8;j=j+1) begin
-			#delay force sda=data1[data_count];
+			#delay sda=data1[data_count];
 			data_count=data_count-1;	  
 			#delay sclk=1;				   
 			#delay sclk=0;				
@@ -170,7 +180,7 @@ module driver(
 		data_count=15;
 		for(j=0;j<8;j=j+1) begin
 			#delay sclk=1;
-			data_from_slave[data_count]=sda;
+			//data_from_slave[data_count]=sda;
 			data_count=data_count-1;
 			#delay sclk=0;	
 		end
@@ -178,7 +188,7 @@ module driver(
 		
 		for(j=0;j<8;j=j+1) begin
 			#delay sclk=1;
-			data_from_slave[data_count]=sda;
+			//data_from_slave[data_count]=sda;
 			data_count=data_count-1;
 			#delay sclk=0;	
 		end
