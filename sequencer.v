@@ -33,7 +33,7 @@ module sequencer();
 			//adress=$urandom%128;
 			data=$urandom%256;
 			data1=$urandom%256;
-			i_data=$urandom%256;
+			i_data=$urandom%1028;
 			end	 
 	endtask
 	

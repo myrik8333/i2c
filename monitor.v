@@ -4,6 +4,7 @@ input o_sda;
 input o_scl;
 input o_scl_en;
 input o_sda_en;
+reg o_scl_flag, o_sda_flag;
 output reg [7:0] output_data;
 output reg [7:0] output_data_1;
 output reg [15:0] data_to_compare;
@@ -13,11 +14,11 @@ integer i,j,data_counter;
 begin
 	data_to_compare<=o_data;
 	data_counter=15;
-	for	(i=0;i<8;i++) begin
+	for	(i=0;i<8;i=i+1) begin
 		output_data_1[i]<=o_data[data_counter];
 		data_counter=data_counter-1;	
 	end	   
-	for	(i=0;i<8;i++) begin
+	for	(i=0;i<8;i=i+1) begin
 		output_data[i]<=o_data[data_counter];
 		data_counter=data_counter-1;	
 	end

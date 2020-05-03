@@ -7,7 +7,7 @@ module test;
 	tri1 scl;
 	 reg clk;
 	tri1 sda;	
-	wire [7:0] parallel_data_output_by_slave;	 
+	wire [15:0] parallel_data_output_by_slave;	 
 	reg [7:0] i_data;
 	reg  [6:0] i_adress;
 	integer serial_data_red_from_slave; 
@@ -36,7 +36,7 @@ module test;
 		);
 	
 		monitor monitor(is1.out,is1.o_sda,is1.o_scl,is1.o_scl_en,is1.o_sda_en,output_data,output_data_1,data_to_compare);
-		scoreboard scoreboard(sequencer.read_or_write,sequencer.data,sequencer.data1,monitor.output_data,monitor.output_data_1,monitor.data_to_compare,sequencer.start_or_stop, sequencer.i_data,sequencer.ackn_behavior_flag);
+		scoreboard scoreboard(monitor.o_sda_flag, monitor.o_scl_flag, sequencer.adress_flag, sequencer.read_or_write,sequencer.data,sequencer.data1,monitor.output_data,monitor.output_data_1,monitor.data_to_compare,sequencer.start_or_stop, sequencer.i_data,sequencer.ackn_behavior_flag);
 		initial begin
 			clk = 0;
  			forever #50 clk = ~clk;
@@ -48,13 +48,13 @@ module test;
 			sequencer.generate_params;
 			//#20 $display("start_or_stop , %d, read_or_write, %d, adress, %d,data, %d adress, %d half_period", sequencer.start_or_stop, sequencer.read_or_write, sequencer.data, sequencer.adress,sequencer.half_period,sequencer.ackn_behavior_flag);
 			driver.send(sequencer.start_or_stop,sequencer.read_or_write,sequencer.data,sequencer.data1,sequencer.adress,sequencer.half_period,sequencer.ackn_behavior_flag);
+			scoreboard.display;
 			end
 		end	 
 		initial begin
 			forever begin
-				@(posedge driver.flag)
-				monitor.read_data;
-				scoreboard.display;
+				@(posedge sequencer.start_or_stop)
+					monitor.read_data;
 			end
 		end
 		//initial begin

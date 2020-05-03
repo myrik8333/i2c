@@ -8,7 +8,7 @@ module i2c(clk,sda,scl,out,rst,adress,data,o_sda,o_scl,o_sda_en,o_scl_en);
 	output [15:0]out;
 	input rst;
 	input [6:0] adress;
-	input [7:0] data;
+	input [15:0] data;
 	output o_sda,o_scl,o_sda_en,o_scl_en;
 	//parameter adress=7'h27;
 	
